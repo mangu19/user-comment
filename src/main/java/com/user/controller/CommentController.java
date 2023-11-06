@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
@@ -35,31 +37,31 @@ public class CommentController {
             @RequestParam @NotBlank(message = "Message cannot be blank") @Size(max = 255, message = "Message should be at most 255 characters long") String message) {
         System.out.println("commFrom="+commentFrom+"\nCommTO="+commentTo+"\nMSG="+message);
         try {
-            User userfrom=new User();
-            userfrom.setCommentFrom(commentFrom);
-            userfrom.setCommentTo(commentTo);
-            Optional<User> existingFroUser = userRepository.findByCommentTo(commentFrom);
-             
-            User fromUser=null;
-            if (existingFroUser.isPresent()) {
-                // Use the existing user
-                fromUser = existingFroUser.get();
-            } else {
-                // Create a new user if not found
-                //User fromUser = new User(commentTo, commentTo);
-                userRepository.save(userfrom);
-            }
-            Optional<User> existingToUser = userRepository.findByCommentTo(commentTo);
+            User userTo=new User();
+            userTo.setCommentFrom(commentFrom);
+            userTo.setCommentTo(commentTo);
+            User userFrom=new User();
+            userFrom.setCommentFrom(commentFrom);
+            userFrom.setCommentTo(commentTo);
+            User toUser = userRepository.findByCommentTo(commentTo).orElseGet(() -> userRepository.save(userTo));
 
-            if (existingToUser.isPresent()) {
-                // Use the existing user
-                User toUser = existingToUser.get();
-            } else {
-                // Create a new user if not found
-                //User toUser = new User(commentTo, commentTo);
-                userRepository.save(userfrom);
-            }
-            //User fromUser = userRepository.findByCommentTo(commentFrom).orElseGet(() -> userRepository.save(new User(commentFrom, commentTo)));
+            User fromUser = userRepository.findByCommentTo(commentFrom).orElseGet(() -> userRepository.save(userFrom));
+        
+            // Optional<User> existingFroUser = userRepository.findByCommentTo(commentTo);
+            // User fromUser=null;
+            // if (existingFroUser.isPresent()) {
+            //     fromUser = existingFroUser.get();
+            // } else {
+            //     fromUser=userRepository.save(userfrom);
+            // }
+            //  Optional<User> existingToUser = userRepository.findByCommentTo(commentTo);
+
+            // if (existingToUser.isPresent()) {
+            //     User toUser = existingToUser.get();
+            // } else {
+            //     userRepository.save(userfrom);
+            // }
+           // User fromUser = userRepository.findByCommentTo(commentFrom).orElseGet(() -> userRepository.save(new User(commentFrom, commentTo)));
             //User toUser = userRepository.findByCommentTo(commentTo).orElseGet(() -> userRepository.save(new User(commentFrom, commentTo)));
 
             Comment comment = new Comment();
@@ -82,7 +84,7 @@ public class CommentController {
     public List<Comment> getComments(@RequestParam String commentTo) {
         System.out.println("commentToString="+commentTo);
         User user = userRepository.findByCommentTo(commentTo).orElse(null);
-        System.out.println("getUserId="+user.getUserId());
+        //System.out.println("getUserId="+user.getUserId());
         if (user == null) {
             return Collections.emptyList();
         }
