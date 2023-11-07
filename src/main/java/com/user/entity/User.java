@@ -16,9 +16,9 @@ public class User {
     @Size(max = 25)
     private String commentFrom;
 
-    public User(String commentFrom, String commentFrom1) {
+    public User(String commentTo, String commentFrom) {
         this.commentFrom=commentFrom;
-        this.commentTo=commentFrom1;
+        this.commentTo=commentTo;
     }
 
     public User() {

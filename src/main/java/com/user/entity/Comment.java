@@ -71,5 +71,10 @@ public class Comment {
     public void setPostedByUser(User postedByUser) {
         this.postedByUser = postedByUser;
     }
+    @PrePersist
+    protected void onCreate() {
+    commentDateTime = LocalDateTime.now();
+}
+
 }
 
