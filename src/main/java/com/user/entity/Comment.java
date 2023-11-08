@@ -24,21 +24,15 @@ public class Comment {
     @JoinColumn(name = "posted_by_user_id")
     private User postedByUser;
 
-
-
     public Comment() {
 
     }
 
-
-
     public Comment(String message, LocalDateTime now, User fromUser) {
-        this.message=message;
-        this.commentDateTime=now;
-        this.postedByUser=fromUser;
+        this.message = message;
+        this.commentDateTime = now;
+        this.postedByUser = fromUser;
     }
-
-
 
     public Long getCommentId() {
         return commentId;
@@ -71,15 +65,13 @@ public class Comment {
     public void setPostedByUser(User postedByUser) {
         this.postedByUser = postedByUser;
     }
+
     @PrePersist
     protected void onCreate() {
-    commentDateTime = LocalDateTime.now();
-}
-
-
+        commentDateTime = LocalDateTime.now();
+    }
 
     public void setText(String string) {
     }
 
 }
-

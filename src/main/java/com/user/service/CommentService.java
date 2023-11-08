@@ -22,20 +22,18 @@ public class CommentService {
 
     @Transactional
     public void addComment(String commentFrom, String commentTo, String message) {
-       
-        User userFrom=null;
-        if ((!isValidUserName(commentFrom) || !isValidUserName(commentTo)) || !isValidMessage( message) ) {
+
+        User userFrom = null;
+        if ((!isValidUserName(commentFrom) || !isValidUserName(commentTo)) || !isValidMessage(message)) {
             throw new InvalidRequestException("Invalid Request");
         }
 
-        userFrom=userRepository.findByCommentFrom(commentFrom);
-       
+        userFrom = userRepository.findByCommentFrom(commentFrom);
 
         if (userFrom == null) {
             userFrom = new User(commentTo, commentFrom);
             userFrom = userRepository.save(userFrom);
         }
-        
 
         Comment comment = new Comment(message, LocalDateTime.now(), userFrom);
 
@@ -43,29 +41,25 @@ public class CommentService {
     }
 
     public List<Comment> getComments(String commentTo) {
-        
-        List<User> users = userRepository.findByCommentTo(commentTo);
-        List<Comment> comments=new ArrayList<>();
-        if(users != null){
-        for (User user : users) {
-            List<Comment> userComments = commentRepository.findByPostedByUser(user);
-            comments.addAll(userComments);
-        }
-        }   
-        else{
-            
-             throw new InvalidRequestException("Invalid Request");
-        }
-            
 
+        List<User> users = userRepository.findByCommentTo(commentTo);
+        List<Comment> comments = new ArrayList<>();
+        if (users != null) {
+            for (User user : users) {
+                List<Comment> userComments = commentRepository.findByPostedByUser(user);
+                comments.addAll(userComments);
+            }
+        } else {
+            throw new InvalidRequestException("Invalid Request");
+        }
         return comments;
     }
 
     private boolean isValidUserName(String userName) {
         return !userName.isEmpty() && userName.matches("^[a-zA-Z]+$");
     }
+
     private boolean isValidMessage(String message) {
         return !message.isEmpty();
     }
 }
-
