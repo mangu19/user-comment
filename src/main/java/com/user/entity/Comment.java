@@ -76,5 +76,10 @@ public class Comment {
     commentDateTime = LocalDateTime.now();
 }
 
+
+
+    public void setText(String string) {
+    }
+
 }
 
