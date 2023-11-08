@@ -41,8 +41,12 @@ public class CommentService {
     }
 
     public List<Comment> getComments(String commentTo) {
+        List<User> users = null;
+        if(isValidUserName(commentTo))
+            users = userRepository.findByCommentTo(commentTo);
+        else
+            throw new InvalidRequestException("Invalid Request");
 
-        List<User> users = userRepository.findByCommentTo(commentTo);
         List<Comment> comments = new ArrayList<>();
         if (users != null) {
             for (User user : users) {
